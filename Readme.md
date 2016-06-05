@@ -11,27 +11,65 @@
 
 ## Summary
 
-A standard for importing and exporting data from a database to a git repository, to facilitate collaborative editing of databases.
+Git has revolutionized collaborative software development. A similar revolution for collaborative database editing has not shown yet.
+Succesfull crowd-sourcing projects exist, but are centralized, often closed source, may require permission to contribute, and do not provide 
+methods of using the database locally, and especially provide no mechanism for branching, forking and version control.
+
+GitDb is a standard for using a git repository as a database, to make collaborative editing of databases finally possible and easy.
+The content and structure can be easily synchronized with existing databases such as Sql or Mongodb.
 
 ## Introduction
 
-*todo*
+Git has proved to have revolutionized collaborative software development by allowing multiple users of the repository to make changes independent of each other,
+while making it easy to import other user's changes back into the local repository. It is a decentralized model, where no-ones modifications can be forced upon another.
+In collaborative software development, editors are free to use their own tools, and run the software locally without depending on third party services.
 
-Main points:
-- collaborative databases right now are centralized (wikipedia, google places)
-- reading the data requires access to a centralized website, when this website is offline, the database is inaccessible (pirate bay)
-- writing to the database requires using the centralized tools (wikipedia), no freedom to use own tools, or only available through an api.
+Today, there exists no such counterpart for collaborative database building. Existing collaborative database projects are centralized in nature, such as Wikipedia, Google Places, Pirate Bay.
+Editors cannot freely use their own tools to edit add or remove data. This puts a limit to the speed with which the data can be improved. Especially small projects suffer from the fact that they are only editable through their website,
+or they must build an api, for which other developers must build clients in turn.
+
+Additionally, everyone must work on a single agreed upon version of the database. For collaborative creativity, this is a problem, and has resulted in edit-wars on Wikipedia, where users cannot agree on which version of the record is preferable,
+or many locked pages where special permission is required to even correct a spelling error.
+
+In open source software development, these issues are solved by simply forking the project and start editing.
+The owner of the base repository can decide freely whether to pull them in or not.
+
+A naive solution would be to export an SQL database dump into a git repository, put it online, let anyone fork it, import it to SQL,
+edit the database with their own tools and then commit updated database dump to the repository. Clearly, this would result in many merge conflicts.
+When two editors insert a record, they will both receive the same auto-incremented ID, creating a conflict.
+When one editor updates field A of a record, while another updates field B, it would be a merge conflict, since database dumps usually 
+dump all record fields in a single line, or even multiple records per line. Additionally, there exists the problem of how to synchronize
+a database with an updated database dump created by another user. It would require to delete the whole database and recreate it from scratch.
+This prevents editors from extending the database structure locally with extra tables and references, since they would be broken each time.
+It also does not allow editors to create branches where different objects exist, with potentially conflicting ID's.
+
+
+GitDB provides a standard for storing database-like information to a git repository, in such a way that:
+
+- it minimizes merge conflicts
+- it lets users take full advantage of git, i.e. collaborative editing, branching, pulling, merging, gitignore
+- it is easily synchronized in two ways with existing database systems
 
 ## Goals
-- provide an intuitive standard for converting a database structure and content to a git repository, and vice-versa
+- provide a standard for storing database contents and structure to a git repository
+- make the barriers to use GitDB as low as possible
+- should be in principle be compatible (synchronizable) with the most popular database systems
+- it should be easy to create a synchronization drive for another database
+- it should provide a common subset of features that are compatible with most other database systems
 - minimize number of merge conflicts
-- be agnostic about the corresponding database
-- support relational databases with foreign key constraints
-- support document oriented databases
+- adherence to the gitdb standard should ensure that the database is convertible to any database system for which drivers are available
+- no or minimal thought should be required with regards to whether the gitdb design is compatible with certain databases
 - allow databases to use their own native primary keys
 - allow two users to add a record to a table without creating a duplicate primary key, and without requiring manual merge
 - a merge conflict never requires changing of record ids. record ids are permanent
 - a git-database can easily be checked for consistency
+- store data in a human readible format, to allow manual editing and lower the barrier for collaboration.
+
+## Non-Goals
+- High performance
+- Be usuable as a database backend for a high performance application
+- Provide a mechanism for querying the database
+- Store data in the most compact form
 
 ## Content
 
