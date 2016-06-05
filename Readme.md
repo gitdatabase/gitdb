@@ -1,4 +1,4 @@
-# GitDb 0.1
+# GitDb 0.1 DRAFT
 
 ## Summary
 
@@ -37,31 +37,29 @@ GitDB provides a standard for storing database-like information to a git reposit
 - application developers can still use their current database system, and use GitDb to enable collaboration and versioning
 
 ## Goals
+
 - provide a standard for storing database contents and structure to a git repository
+- any project synchronizing their database with a GitDB repository can directly benefit from crowd-sourced contributions, version control, and tools that are available for Git and GitDb
+- setting up synchronization should require minimal effort
+- minimize number of merge conflicts for crud and structural changes
 - make the barriers to use GitDB as low as possible
-- should be in principle be compatible (synchronizable) with the most popular database systems
-- it should be easy to create a synchronization drive for another database
-- it should provide a common subset of features that are compatible with most other database systems
-- minimize number of merge conflicts
+- should be compatible (synchronizable) with any popular database systems
 - adherence to the gitdb standard should ensure that the database is convertible to any database system for which drivers are available
-- no or minimal thought should be required with regards to whether the gitdb design is compatible with certain databases
-- allow databases to use their own native primary keys
-- allow two users to add a record to a table without creating a duplicate primary key, and without requiring manual merge
-- a merge conflict never requires changing of record ids. record ids are permanent
-- a git-database can easily be checked for consistency
-- store data in a human readible format, to allow manual editing and lower the barrier for collaboration.
+- enhancing an existing database with GitDb does not require high changes to the database structure
 
 ## Non-Goals
-- Using GitDb as a live backend for applications
-- Support storing large amounts of machine generated data
-- Be usuable as a database backend for a high performance application
-- Provide a mechanism for querying the database
-- Store data in the most compact form
-- Standardize how a GitDb repository should be converted to a specific database platform, although examples and algorithms will be provided to facilitate the development of drivers
+
+- using GitDb as a live backend for high performance applications
+- support storing large amounts of machine generated data
+- provide a mechanism for querying the GitDB repository
+- optimize for space efficiency
+- standardize how a GitDb repository should be converted to a specific database platform.  
+  Examples and algorithms will be provided to facilitate the development of drivers.
 
 ## Content
 
 - Specification
+    - Repository
     - Collections
     - Objects
         - Attributes
@@ -73,6 +71,18 @@ GitDB provides a standard for storing database-like information to a git reposit
 - Synchronizing with other Databases
 
 ## Specification
+
+### Repository
+
+A GitDb repository is a Git repository containing one or more collections of objects.
+
+A repository must include the following empty file:
+
+    /.gitdb
+
+Restrictions:
+- The repository may not contain any directories other than the specified collections
+- The root of the repository may contain other files, these are not part of the database
 
 ### Collections
 
@@ -88,6 +98,7 @@ Restrictions:
 - Collection name equality tests must be case insensitive
 - Collection names must be unique within the repository
 - Collections must contain zero or more objects
+- Collections may not contain any files
 
 ### Objects:
 
@@ -247,45 +258,4 @@ Contents of ``.gitignore``
 ```
 /users/*/id
 /messages/*/id
-```
-
-### UUIDS vs Primary Keys
-
-The primary keys in the table are not used to identify records within the git repository, as this would raise conflicts when multiple participants use the same subsequent id to create a record. Therefor, every record gets a universally unique id.
-
-- Todo: How to map the ID to UUID and vice-versa.
-  - store UUID in table
-    - con: need to modify tables to use gitdb
-  - store id in repository (gitignored)
-    - con: need a local checkout of the repository, while a bare .git repository would be more lightweight
-  - keep the mapping somewhere else. Perhaps inside the .git directory.
-    - con: not very intuitive
-
-- Questions to answer:
-  - what happens when you switch branches. is the mapping still valid? can we ensure that records in the database get the same UUID?
-
-
-
-## Document Database
-```
-COLLECTION_NAME:
-  RECORD_ID
-    PROPERTY_NAME: PROPERTY_VALUE
-    or
-    PROPERTY_NAME:
-      PROPERTY_NAME: PROPERTY_VALUE
-```
-
-Example
-
-```
-users:
-  18da2b15-1708-4cec-a583-564e79c9bddb:
-    first_name: "Alice"
-    last_name: "Jones"
-    address:
-      home:
-        street: "Foobar boulevard"
-        house_number: 1
-        
 ```
