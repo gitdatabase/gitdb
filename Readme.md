@@ -1,4 +1,6 @@
-# GitDb 0.1 DRAFT
+# GitDb 0.1 [DRAFT]
+
+@author Bouke Versteegh
 
 ## Summary
 
@@ -8,6 +10,20 @@ methods of using the database locally, and especially provide no mechanism for b
 
 GitDb is a standard for using a git repository as a database, to make collaborative editing of databases finally possible and easy.
 The content and structure can be easily synchronized with existing databases such as Sql or Mongodb.
+
+
+## Contents
+
+- Introduction
+- Goals
+- Non-Goals
+- GitDb Specification
+    - Repository
+    - Collections
+    - Objects
+    - Relations
+    - Constraints
+- Synchronizing with other Databases
 
 ## Introduction
 
@@ -56,21 +72,7 @@ GitDB provides a standard for storing database-like information to a git reposit
 - standardize how a GitDb repository should be converted to a specific database platform.  
   Examples and algorithms will be provided to facilitate the development of drivers.
 
-## Content
-
-- Specification
-    - Repository
-    - Collections
-    - Objects
-        - Attributes
-            - Primitives
-            - Dictionary
-            - Collection
-    - Relations
-    - Constraints
-- Synchronizing with other Databases
-
-## Specification
+## GitDb Specification
 
 ### Repository
 
@@ -94,13 +96,14 @@ For example, an application keeping track of users and their posts contains the 
     /posts
 
 Restrictions:
+
 - Collection names must match the following regex pattern: [a-zA-Z0-9_]+
 - Collection name equality tests must be case insensitive
 - Collection names must be unique within the repository
 - Collections must contain zero or more objects
 - Collections may not contain any files
 
-### Objects:
+### Objects
 
 Objects are stored within collections. An object is represented by a sub-directory of a collection, with a UUID-4 name.
 
@@ -110,7 +113,8 @@ For example, a database containing one user and two posts has the following dire
     /posts/7403057b-f183-45db-bcce-f05f509fc3d7
     /posts/8e7eed2b-a285-44e5-b69e-b9961548b64f
 
-Restrictions:
+Restrictions
+
 - Object names must be a valid UUID-4 identifier
 - Object names must be lowercase
 - Object names must be unique within the _repository_
@@ -120,17 +124,19 @@ Restrictions:
 - Objects may not be moved to another collection
 - Objects that were deleted may be restored with their original name [? to discuss]
 
-### Attributes:
+### Attributes
 
 Attributes are name-value pairs within objects. Attributes are stored differently depending on their value type.
 
 These are the available value types:
+
 - Primitives (``string``, ``number``, ``true``, ``false``, ``null``)
 - Dictionary
 - Collection
 - Reference
 
 Restrictions:
+
 - Attribute name equality tests must be case insensitive
 - Attribute names must be unique within their parent directory (object or dictionary)
 
@@ -151,10 +157,12 @@ For example, if the user's name was ``Óscar González`` the contents of the fil
     "\u00d3scar Gonz\u00e1lez"
 
 Value restrictions:
+
 - A value must be a primitive. I.e: it must not be an array or object
 - A value may be null.
 
 File content restrictions:
+
 - The whole content of the file must be a single parsable JSON value
 - The file must not be terminated by a newline
 - The file must not be empty
@@ -180,6 +188,7 @@ For example, a social networking application with one user and two posts (with o
     /users/0130f996-3930-45b7-9413-b5582f318fda/posts/83a42bfb-3fc1-4a4a-857e-abfe0f7ad752/content
 
 Restrictions:
+
 - The order of a collection is not defined. Ordering objects within a collection must be implemented at the application level, for example by storing an ``index`` attribute within each object, with a value representing its position in within the collection.
 - A collection must not be empty. An empty collection must be modeled by omiting the directory.
 - Otherwise, the same restrictions to root-level collections apply.
@@ -231,6 +240,7 @@ The following list indicates how a GitDb repository may correspond to a database
 As an example, the following repository could be mapped to MySQL as follows.
 
 **GitDb Repository**
+
 ```
 /countries/384fbe/name (contents: "USA")
 /users/1f34a8/name (contents: "John")
@@ -239,6 +249,7 @@ As an example, the following repository could be mapped to MySQL as follows.
 _Note: Object names are shortened for readability._
 
 **MySQL**
+
 ```
 # countries
 id | uuid   | name
@@ -251,11 +262,3 @@ id | uuid   | name | country
 1  | 1f34a8 | John | 2
 ```
 _Note: This particular mapping does not use the object names as primary keys, which makes sense for performance reasons.
-
-
-Contents of ``.gitignore``
-
-```
-/users/*/id
-/messages/*/id
-```
