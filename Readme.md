@@ -1,12 +1,3 @@
-# Notes
-
-- GitDB should be a standard for storing database-like information to a git repository.
-- It does not tell how it should be mapped/imported exported to SQL/Mongo etc.
-- Makers of tools to synchronize with gitdb should decide by themselves how to do that
-- Example drivers will be provided for a few of the most popular database systems.
-- The repository does not contain information on the mapping.
-
-
 # GitDb 0.1
 
 ## Summary
@@ -61,10 +52,12 @@ GitDB provides a standard for storing database-like information to a git reposit
 - store data in a human readible format, to allow manual editing and lower the barrier for collaboration.
 
 ## Non-Goals
-- High performance
+- Using GitDb as a live backend for applications
+- Support storing large amounts of machine generated data
 - Be usuable as a database backend for a high performance application
 - Provide a mechanism for querying the database
 - Store data in the most compact form
+- Standardize how a GitDb repository should be converted to a specific database platform, although examples and algorithms will be provided to facilitate the development of drivers
 
 ## Content
 
