@@ -63,11 +63,12 @@ GitDB provides a standard for storing database-like information to a git reposit
 - make the barriers to use GitDB as low as possible
 - should be compatible (synchronizable) with any popular database systems
 - adherence to the gitdb standard should ensure that the database is convertible to any database system for which drivers are available
-- enhancing an existing database with GitDb does not require high changes to the database structure
+- enhancing an existing database with GitDb does not require changes to the existing database structure
 
 ## Non-Goals
 
 - using GitDb as a live backend for high performance applications
+- real-time synchronization
 - support storing large amounts of machine generated data
 - provide a mechanism for querying the GitDB repository
 - optimize for space efficiency
