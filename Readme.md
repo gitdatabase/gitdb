@@ -1,4 +1,4 @@
-# GitDb 0.2 [DRAFT]
+# GitDb 0.2.1 [DRAFT]
 
 @author Bouke Versteegh
 
