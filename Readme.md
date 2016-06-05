@@ -43,6 +43,7 @@ GitDB provides a standard for storing database-like information to a git reposit
 - it minimizes merge conflicts
 - it lets users take full advantage of git, i.e. collaborative editing, forking, branching, pulling, merging, gitignore
 - it is easily synchronized in two ways with multiple existing database systems
+- application developers can still use their current database system, and use GitDb to enable collaboration and versioning
 
 ## Goals
 - provide a standard for storing database contents and structure to a git repository
