@@ -85,6 +85,7 @@ A repository must include the following empty file:
     /.gitdb
 
 Restrictions:
+
 - The repository may not contain any directories other than the specified collections
 - The root of the repository may contain other files, these are not part of the database
 
