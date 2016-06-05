@@ -1,4 +1,4 @@
-# GitDb 0.1 [DRAFT]
+# GitDb 0.2 [DRAFT]
 
 @author Bouke Versteegh
 
@@ -21,8 +21,10 @@ The content and structure can be easily synchronized with existing databases suc
     - Repository
     - Collections
     - Objects
-    - Relations
-    - Constraints
+    - References
+    - (Collections of References)
+    - (Lists of Primitives)
+    - (Constraints)
 - Synchronizing with other Databases
 
 ## Introduction
@@ -113,7 +115,7 @@ For example, a database containing one user and two posts has the following dire
     /posts/7403057b-f183-45db-bcce-f05f509fc3d7
     /posts/8e7eed2b-a285-44e5-b69e-b9961548b64f
 
-Restrictions
+Restrictions:
 
 - Object names must be a valid UUID-4 identifier
 - Object names must be lowercase
@@ -121,8 +123,12 @@ Restrictions
 - Object names may not be changed
 - Objects may be deleted
 - Objects may be added
-- Objects may not be moved to another collection
-- Objects that were deleted may be restored with their original name [? to discuss]
+- Objects may not be moved to another collection [1]
+- Objects that were deleted may be restored with their original name [2]
+
+
+1. To discuss. An application storing users a collection of owned items, may need to move an owned item to another user.
+   Either this restriction should be removed, or specified more precisely to enable this use case.
 
 ### Attributes
 
@@ -130,21 +136,21 @@ Attributes are name-value pairs within objects. Attributes are stored differentl
 
 These are the available value types:
 
-- Primitives (``string``, ``number``, ``true``, ``false``, ``null``)
+- Primitives (``string``, ``number``, ``true``, ``false``)
 - Dictionary
 - Collection
 - Reference
 
 Restrictions:
 
-- Attribute name equality tests must be case insensitive
 - Attribute names must be unique within their parent directory (object or dictionary)
+- Attribute name equality tests must be case insensitive
 
 #### Primitives
 
-Available primitive value types are: ``string``, ``number``, ``true``, ``false``, ``null``. These correspond to the same value types in JSON.
+Available primitive value types are: ``string``, ``number``, ``true``, ``false``. These correspond to the same value types in JSON.
 
-Attributes of these types are stored as files.
+Primitives are stored as files.
 
 A repository with a user that has a name (type ``string``), might contain the following file:
 
@@ -156,16 +162,12 @@ For example, if the user's name was ``Óscar González`` the contents of the fil
 
     "\u00d3scar Gonz\u00e1lez"
 
-Value restrictions:
-
-- A value must be a primitive. I.e: it must not be an array or object
-- A value may be null.
-
-File content restrictions:
+Restrictions:
 
 - The whole content of the file must be a single parsable JSON value
 - The file must not be terminated by a newline
 - The file must not be empty
+- ``null`` is not a valid value. Undefined values must be modeled by omitting the attribute completely.
 
 #### Dictionary
 
@@ -222,7 +224,28 @@ while collections must only contain objects, and may not contain attributes or v
     /users/8bebfeba-c272-483d-831e-91a184bf88ab/likedPosts/86e6c742-c2d0-4152-b6a8-17e0e4f62589
         --> ../../0130f996-3930-45b7-9413-b5582f318fda/posts/413f226d-34e2-41fa-a79f-5e9ad38a098a
 
+#### Lists of primitives
 
+In this version of GitDb, lists of primitive values are not supported.
+
+This aspect is open for discussion.
+
+A few points to consider:
+- Since primite values have no attributes, their order should be stored somehow
+- How to identify an item on the list? If [1,2,3] was changed to [1,3], was 2 removed, or changed to 3 and 3 removed? The synchronization of these modification to MySQL may not be trivial. Suggestions welcome.
+
+Against supporting lists:
+- MySQL does not support multiple values per column
+
+One method of modeling lists could be:
+- An attribute stored as a file, where each line is a json encoded value.
+
+Ordered lists make collaboration difficult, since the values do not have identifiers.
+
+
+#### Constraints
+
+The specification has not defined how to model constraints yet.
 
 # Synchronizing with other databases
 
