@@ -26,29 +26,23 @@ In collaborative software development, editors are free to use their own tools, 
 
 Today, there exists no such counterpart for collaborative database building. Existing collaborative database projects are centralized in nature, such as Wikipedia, Google Places, Pirate Bay.
 Editors cannot freely use their own tools to edit add or remove data. This puts a limit to the speed with which the data can be improved. Especially small projects suffer from the fact that they are only editable through their website,
-or they must build an api, for which other developers must build clients in turn.
-
-Additionally, everyone must work on a single agreed upon version of the database. For collaborative creativity, this is a problem, and has resulted in edit-wars on Wikipedia, where users cannot agree on which version of the record is preferable,
+or they must build an api, for which other developers must build clients in turn. Additionally, everyone must work on a single agreed upon version of the database. For collaborative creativity, this is a problem, and has resulted in edit-wars on Wikipedia, where users cannot agree on which version of the record is preferable,
 or many locked pages where special permission is required to even correct a spelling error.
 
-In open source software development, these issues are solved by simply forking the project and start editing.
+In git based software development, these issues are solved by simply forking the project and start editing.
 The owner of the base repository can decide freely whether to pull them in or not.
 
-A naive solution would be to export an SQL database dump into a git repository, put it online, let anyone fork it, import it to SQL,
-edit the database with their own tools and then commit updated database dump to the repository. Clearly, this would result in many merge conflicts.
-When two editors insert a record, they will both receive the same auto-incremented ID, creating a conflict.
-When one editor updates field A of a record, while another updates field B, it would be a merge conflict, since database dumps usually 
-dump all record fields in a single line, or even multiple records per line. Additionally, there exists the problem of how to synchronize
-a database with an updated database dump created by another user. It would require to delete the whole database and recreate it from scratch.
-This prevents editors from extending the database structure locally with extra tables and references, since they would be broken each time.
-It also does not allow editors to create branches where different objects exist, with potentially conflicting ID's.
-
+A naive solution such as using a database dump in a git repository, would not be a practical solution.
+Databases are eventually used as backends for applications, so the dump would always need to be synchronized with a database server.
+A dump overrides all of the database's contents on each import, creates a lot of unnecessary merge conflicts because records are dumped line by line,
+and in git, modified lines that are adjecent create merge conflicts. Furthermore, this system cannot prevent duplicate primary keys, or misreferences due to id conflicts.
+Finally it is forever tied to the database system used, and cannot readily be synchronized with other database systems (e.g. from mysql to mongodb).
 
 GitDB provides a standard for storing database-like information to a git repository, in such a way that:
 
 - it minimizes merge conflicts
-- it lets users take full advantage of git, i.e. collaborative editing, branching, pulling, merging, gitignore
-- it is easily synchronized in two ways with existing database systems
+- it lets users take full advantage of git, i.e. collaborative editing, forking, branching, pulling, merging, gitignore
+- it is easily synchronized in two ways with multiple existing database systems
 
 ## Goals
 - provide a standard for storing database contents and structure to a git repository
